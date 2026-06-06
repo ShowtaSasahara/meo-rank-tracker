@@ -53,6 +53,9 @@ def load_config(path: Path) -> List[Dict[str, str]]:
 
 
 def build_ll(conf: Dict[str, str]) -> str:
+    if (conf.get("ll") or "").strip():
+        return (conf.get("ll") or "").strip()
+
     lat = (conf.get("lat") or DEFAULT_LAT).strip()
     lng = (conf.get("lng") or DEFAULT_LNG).strip()
     zoom = (conf.get("zoom") or DEFAULT_ZOOM).strip().replace("z", "")
