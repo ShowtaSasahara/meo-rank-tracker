@@ -221,12 +221,12 @@ def main() -> None:
 
     # Google Sheets batch write: only 2 writes per run, avoiding 429 quota errors.
     if ENABLE_GOOGLE_SHEETS:
-    spreadsheet = get_spreadsheet()
-    append_sheet_rows(spreadsheet, "rank_log", rank_rows)
-    time.sleep(1)
-    append_sheet_rows(spreadsheet, "daily_rank", rank_rows)
+        spreadsheet = get_spreadsheet()
+        append_sheet_rows(spreadsheet, "rank_log", rank_rows)
+        time.sleep(1)
+        append_sheet_rows(spreadsheet, "daily_rank", rank_rows)
 
-print(f"Saved {len(rank_rows)} rank rows.")
+    print(f"Saved {len(rank_rows)} rank rows.")
 
 
 if __name__ == "__main__":
