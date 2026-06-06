@@ -173,7 +173,6 @@ def main() -> None:
         location_label = conf.get("location", "")
         max_pages = int(conf.get("max_pages", "2") or 2)
         ll = build_ll(conf)
-        print(f"DEBUG LL = {ll}")
 
         try:
             results = fetch_google_maps_results(keyword, ll, max_pages=max_pages)
