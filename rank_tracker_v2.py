@@ -177,23 +177,6 @@ def main() -> None:
             results = fetch_google_maps_results(keyword, ll, max_pages=max_pages)
             rank, item = find_store(results, match_name)
 
-            for position, result_item in enumerate(results[:20], start=1):
-                top20_rows.append({
-                    "checked_at": checked_at,
-                    "date": today,
-                    "store_name": store_name,
-                    "keyword": keyword,
-                    "location": location_label,
-                    "ll": ll,
-                    "position": position,
-                    "title": result_item.get("title", ""),
-                    "rating": result_item.get("rating", ""),
-                    "reviews": result_item.get("reviews", ""),
-                    "address": result_item.get("address", ""),
-                    "data_cid": result_item.get("data_cid", ""),
-                    "place_id": result_item.get("place_id", ""),
-                })
-
             rank_rows.append({
                 "checked_at": checked_at,
                 "date": today,
@@ -235,14 +218,12 @@ def main() -> None:
 
     # Local CSV backup
     append_csv_rows(rank_rows, LOG_PATH)
-    append_csv_rows(top20_rows, TOP20_LOG_PATH)
 
     # Google Sheets batch write: only 2 writes per run, avoiding 429 quota errors.
     if ENABLE_GOOGLE_SHEETS:
         spreadsheet = get_spreadsheet()
         append_sheet_rows(spreadsheet, "rank_log", rank_rows)
         time.sleep(1)
-        append_sheet_rows(spreadsheet, "top20_log", top20_rows)
 
     print(f"Saved {len(rank_rows)} rank rows and {len(top20_rows)} top20 rows.")
 
