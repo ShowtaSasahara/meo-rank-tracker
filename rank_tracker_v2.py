@@ -25,7 +25,6 @@ JST = timezone(timedelta(hours=9))
 
 CONFIG_PATH = Path(os.getenv("CONFIG_PATH", "config.csv"))
 LOG_PATH = Path(os.getenv("LOG_PATH", "rank_log.csv"))
-TOP20_LOG_PATH = Path(os.getenv("TOP20_LOG_PATH", "top20_log.csv"))
 
 SERPAPI_API_KEY = os.getenv("SERPAPI_API_KEY")
 SPREADSHEET_ID = os.getenv("SPREADSHEET_ID", "1Aa9eB0N0BAESe1TZk-y90pc6ryhvtcOhLZjrsGUSiSk")
@@ -163,7 +162,6 @@ def main() -> None:
         return
 
     rank_rows: List[Dict[str, Any]] = []
-    top20_rows: List[Dict[str, Any]] = []
 
     for conf in configs:
         store_name = conf.get("store_name", "")
@@ -185,6 +183,7 @@ def main() -> None:
                 "location": location_label,
                 "ll": ll,
                 "rank": rank if rank is not None else "NOT_FOUND",
+                "rank_numeric": rank if rank is not None else "",
                 "found_title": item.get("title", "") if item else "",
                 "rating": item.get("rating", "") if item else "",
                 "reviews": item.get("reviews", "") if item else "",
@@ -205,6 +204,7 @@ def main() -> None:
                 "location": location_label,
                 "ll": ll,
                 "rank": "ERROR",
+                "rank_numeric": "",
                 "found_title": "",
                 "rating": "",
                 "reviews": "",
@@ -221,11 +221,12 @@ def main() -> None:
 
     # Google Sheets batch write: only 2 writes per run, avoiding 429 quota errors.
     if ENABLE_GOOGLE_SHEETS:
-        spreadsheet = get_spreadsheet()
-        append_sheet_rows(spreadsheet, "rank_log", rank_rows)
-        time.sleep(1)
+    spreadsheet = get_spreadsheet()
+    append_sheet_rows(spreadsheet, "rank_log", rank_rows)
+    time.sleep(1)
+    append_sheet_rows(spreadsheet, "daily_rank", rank_rows)
 
-    print(f"Saved {len(rank_rows)} rank rows and {len(top20_rows)} top20 rows.")
+print(f"Saved {len(rank_rows)} rank rows.")
 
 
 if __name__ == "__main__":
